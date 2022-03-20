@@ -21,14 +21,14 @@ Please stay tuned!
 
 ## Demo
 
-### Short term segmentation tracking results on STEP dataset
+### Short term segmentation and tracking results on Cityscapes VPS dataset.
 
 images(left), Video K-Net(middle), Ground Truth 
 ![Alt Text](./figs/cityscapes_vps_video_1_20220318131729.gif)
 
 ![Alt Text](./figs/cityscapes_vps_video_2_20220318132943.gif)
 
-### Long term segmentation and tracking results on Cityscapes VPS dataset.
+### Long term segmentation and tracking results on STEP dataset.
 
 ![Alt Text](./figs/step_video_1_20220318133227.gif)
 
