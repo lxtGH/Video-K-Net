@@ -49,14 +49,12 @@ def single_gpu_test(model,
             semantic_input = torch.tensor(semantic_input, device=data['img'][0].device)
         else:
             semantic_input = None
-        if img_id == 86:
-            print("Debug point")
+
         with torch.no_grad():
             segm_results = model(return_loss=False, rescale=True, semantic_input=semantic_input, **data)
 
         sseg_results, track_maps, depth_final, vis_sem, vis_tracker = segm_results
         batch_size = 1
-        # merge
 
         # dump results
         seq_folder = str(seq_id) if with_seq else ""
