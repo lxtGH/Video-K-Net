@@ -4,6 +4,7 @@ _base_ = [
     '../../_base_/models/knet_kitti_step_s3_r50_fpn.py',
     '../../_base_/datasets/kitti_step_vps.py',
 ]
+
 load_from = "/mnt/lustre/lixiangtai/project/Knet/work_dirs/city_step/swin_b_joint_8e/latest.pth"
 
 
@@ -145,7 +146,7 @@ model = dict(
     bbox_roi_extractor=None
 )
 
-work_dir = 'logger/ks_wodepth_4x8_step_stride2_nocrop_2_17'
+
 
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=False)

@@ -4,7 +4,8 @@ _base_ = [
     '../../_base_/models/knet_kitti_step_s3_r50_fpn.py',
     '../../_base_/datasets/kitti_step_vps.py',
 ]
-load_from = "/mnt/lustre/lixiangtai/project/Knet/work_dirs/city_step/swin_l_joint_8e/latest.pth"
+
+load_from = "/mnt/lustre/lixiangtai/project/Knet/work_dirs/city_step/swin_b_joint_8e/latest.pth"
 
 num_stages = 3
 conv_kernel_size = 1
@@ -19,23 +20,13 @@ model = dict(
     num_stuff_classes=17,
     ignore_label=255,
     backbone=dict(
-        _delete_=True,
-        type='SwinTransformerDIY',
-        embed_dims=192,
-        depths=[2, 2, 18, 2],
-        num_heads=[6, 12, 24, 48],
-        window_size=7,
-        mlp_ratio=4.,
-        qkv_bias=True,
-        qk_scale=None,
-        drop_rate=0.,
-        attn_drop_rate=0.,
-        drop_path_rate=0.2,
-        use_abs_pos_embed=False,
-        patch_norm=True,
-        out_indices=(0, 1, 2, 3),
-        with_cp=False),
-    neck=dict(in_channels=[192, 384, 768, 1536]),
+            type='ResNet',
+            depth=50,
+            num_stages=4,
+            out_indices=(0, 1, 2, 3),
+            frozen_stages=1,
+            norm_cfg=dict(type='SyncBN', requires_grad=True),
+    ),
     rpn_head=dict(
         loss_seg=dict(
                 _delete_=True,
@@ -48,7 +39,7 @@ model = dict(
     track_head=dict(
         type='QuasiDenseMaskEmbedHeadGTMask',
         num_convs=0,
-        num_fcs=1,
+        num_fcs=2,
         roi_feat_size=1,
         in_channels=256,
         fc_out_channels=256,
@@ -91,7 +82,6 @@ model = dict(
                 type='VideoKernelUpdateHead',
                 num_classes=19,
                 previous='placeholder',
-                previous_link="update_dynamic_cov",
                 previous_type="ffn",
                 num_thing_classes=2,
                 num_stuff_classes=17,
@@ -142,7 +132,6 @@ model = dict(
         sampler=dict(type='MaskPseudoSampler'),),
     bbox_roi_extractor=None
 )
-
 
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=False)
