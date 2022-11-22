@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+work_dir/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -113,7 +114,6 @@ data
 *.pkl
 *.pkl.json
 *.log.json
-work_dir/
 
 # Pytorch
 *.pth

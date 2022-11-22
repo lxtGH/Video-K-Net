@@ -677,6 +677,7 @@ class VideoKernelIterHead(BaseRoIHead):
         current_segment_id = 0
         segments_info = []
         instance_ids = []
+
         # Add instances one-by-one, check for overlaps with existing ones
         for inst_id in sorted_inds:
             score = thing_scores[inst_id].item()
@@ -855,7 +856,6 @@ class VideoKernelIterHead(BaseRoIHead):
         # sort instance outputs by scores
         sorted_inds = torch.argsort(-total_scores)
         current_segment_id = 0
-        # sort_obj_fea = obj_fea[sorted_inds]
         sort_obj_fea = obj_fea
         things_ids = []
         for k in sorted_inds:
@@ -880,7 +880,7 @@ class VideoKernelIterHead(BaseRoIHead):
                         'id': current_segment_id,
                         'isthing': isthing,
                         'score': total_scores[k].item(),
-                        'category_id': pred_class,
+                        'category_id': pred_class,  # 0, num_thing - 1
                         'instance_id': k.item(),
                     })
                     things_ids.append(k.item())
@@ -888,7 +888,7 @@ class VideoKernelIterHead(BaseRoIHead):
                     segments_info.append({
                         'id': current_segment_id,
                         'isthing': isthing,
-                        'category_id': pred_class - self.num_thing_classes + 1,
+                        'category_id': pred_class - self.num_thing_classes + 1, # 1, num_stuff
                         'area': mask_area,
                     })
 

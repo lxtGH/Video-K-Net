@@ -19,6 +19,7 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
     """
         Simple Extension of KNet to Video KNet by the implementation of VPSFuse Net.
     """
+
     def __init__(self,
                  backbone,
                  neck=None,
@@ -89,7 +90,7 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
             self.tracker_cfg = tracker
 
         if freeze_detector:
-           self._freeze_detector()
+            self._freeze_detector()
 
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
@@ -309,7 +310,7 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
 
         ref_gt_instance_id_list = []
         for ref_gt_instance_id in ref_gt_instance_ids:
-            ref_gt_instance_id_list.append(ref_gt_instance_id[:,1].long())
+            ref_gt_instance_id_list.append(ref_gt_instance_id[:, 1].long())
 
         ref_img_metas_new = []
         for ref_img_meta in ref_img_metas:
@@ -329,7 +330,8 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
         # gt_masks and gt_semantic_seg are not padded when forming batch
         gt_masks, gt_sem_cls, gt_sem_seg = self.preprocess_gt_masks(img_metas, gt_masks, gt_labels, gt_semantic_seg)
         ref_gt_masks, ref_gt_sem_cls, ref_gt_sem_seg = self.preprocess_gt_masks(ref_img_metas_new,
-                                                                    ref_masks_gt, ref_gt_labels, ref_semantic_seg_gt)
+                                                                                ref_masks_gt, ref_gt_labels,
+                                                                                ref_semantic_seg_gt)
 
         x = self.extract_feat(img)
         x_ref = self.extract_feat(ref_img)
@@ -349,13 +351,13 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
         (ref_proposal_feats, ref_x_feats, ref_mask_preds,
          ref_cls_scores, ref_seg_preds) = ref_rpn_results
 
-        ref_obj_feats,  ref_cls_scores, ref_mask_preds, ref_scaled_mask_preds = self.roi_head.simple_test_mask_preds(
+        ref_obj_feats, ref_cls_scores, ref_mask_preds, ref_scaled_mask_preds = self.roi_head.simple_test_mask_preds(
             ref_x_feats,
             ref_proposal_feats,
             ref_mask_preds,
             ref_cls_scores,
             ref_img_metas_new,
-           )
+        )
 
         if self.link_previous:
             losses, object_feats, cls_scores, mask_preds, scaled_mask_preds, object_feats_track = self.roi_head.forward_train_with_previous(
@@ -398,7 +400,8 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
 
         for i in range(num_imgs):
             assign_result = self.track_roi_assigner.assign(
-                scaled_mask_preds[i][:self.num_proposals].detach(), cls_scores[i][:self.num_proposals, :self.num_thing_classes].detach(),
+                scaled_mask_preds[i][:self.num_proposals].detach(),
+                cls_scores[i][:self.num_proposals, :self.num_thing_classes].detach(),
                 gt_masks[i], gt_labels[i], img_meta=img_metas[i])
             sampling_result = self.track_roi_sampler.sample(
                 assign_result,
@@ -407,7 +410,8 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
             key_sampling_results.append(sampling_result)
 
             ref_assign_result = self.track_roi_assigner.assign(
-                ref_scaled_mask_preds[i][:self.num_proposals].detach(), ref_cls_scores[i][:self.num_proposals, :self.num_thing_classes].detach(),
+                ref_scaled_mask_preds[i][:self.num_proposals].detach(),
+                ref_cls_scores[i][:self.num_proposals, :self.num_thing_classes].detach(),
                 ref_gt_masks[i], ref_gt_labels[i], img_meta=ref_img_metas_new[i])
             ref_sampling_result = self.track_roi_sampler.sample(
                 ref_assign_result,
@@ -427,7 +431,6 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
         for emb_layer in self.embed_fcs:
             emb_feat = emb_layer(emb_feat)
         object_feats_embed = self.fc_embed(emb_feat).view(N, self.num_proposals, -1)
-
 
         ref_emb_feat = ref_obj_feats.squeeze(-2).squeeze(-1)[:, :self.num_proposals, ]
         for emb_layer in self.embed_fcs:
@@ -528,7 +531,6 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
         _, segm_result, mask_preds, panoptic_result, query_output = cur_segm_results[0]
         panoptic_seg, segments_info = panoptic_result
 
-
         # get sorted tracking thing ids, labels, masks, score for tracking
         things_index_for_tracking, things_labels_for_tracking, thing_masks_for_tracking, things_score_for_tracking = \
             self.get_things_id_for_tracking(panoptic_seg, segments_info)
@@ -574,8 +576,9 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
             track_feats = self._track_forward([object_feats_embed_for_tracking])
 
         if track_feats is not None:
-            things_bbox_for_tracking[:, :4] = torch.tensor(tensor_mask2box(thing_masks_for_tracking_with_semantic_filter),
-                                                           device=things_bbox_for_tracking.device)
+            things_bbox_for_tracking[:, :4] = torch.tensor(
+                tensor_mask2box(thing_masks_for_tracking_with_semantic_filter),
+                device=things_bbox_for_tracking.device)
             bboxes, labels, ids = self.tracker.match(
                 bboxes=things_bbox_for_tracking,
                 labels=things_labels_for_tracking,
@@ -585,6 +588,8 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
             ids[ids == -1] = 0
         else:
             ids = []
+
+        print("ids", ids)
 
         track_maps = self.generate_track_id_maps(ids, thing_masks_for_tracking, panoptic_seg)
 
@@ -678,12 +683,14 @@ class VideoKNetQuansiEmbedFC(BaseDetector):
     def pack_things_object(self, object_feats, ref_object_feats):
         object_feats, ref_object_feats = object_feats.squeeze(-1).squeeze(-1), ref_object_feats.squeeze(-1).squeeze(-1)
         thing_object_feats = torch.split(object_feats, [self.roi_head.num_proposals, self.num_stuff_classes], dim=1)[0]
-        ref_thing_object_feats = torch.split(ref_object_feats, [self.roi_head.num_proposals, self.num_stuff_classes], dim=1)[0]
+        ref_thing_object_feats = \
+        torch.split(ref_object_feats, [self.roi_head.num_proposals, self.num_stuff_classes], dim=1)[0]
         return thing_object_feats, ref_thing_object_feats
 
     def pack_things_masks(self, mask_pred, ref_mask_pred):
         thing_mask_pred = torch.split(mask_pred, [self.roi_head.num_proposals, self.num_stuff_classes], dim=1)[0]
-        ref_thing_thing_mask_pred = torch.split(ref_mask_pred, [self.roi_head.num_proposals, self.num_stuff_classes], dim=1)[0]
+        ref_thing_thing_mask_pred = \
+        torch.split(ref_mask_pred, [self.roi_head.num_proposals, self.num_stuff_classes], dim=1)[0]
         return thing_mask_pred, ref_thing_thing_mask_pred
 
     def get_semantic_seg(self, panoptic_seg, segments_info):

@@ -9,6 +9,10 @@ load_from = None
 
 num_stages = 3
 conv_kernel_size = 1
+num_thing_classes = 2
+num_stuff_classes = 17
+num_classes = num_thing_classes + num_stuff_classes
+
 
 model = dict(
     type="VideoKNetQuansiEmbedFCJointTrain",

@@ -7,7 +7,8 @@ _base_ = [
 
 
 num_proposals = 100
-load_from = "/mnt/lustre/lixiangtai/pretrained/video_knet_vis/knet_swin_b_city.pth"
+# load_from = "/mnt/lustre/lixiangtai/pretrained/video_knet_vis/knet_swin_b_city.pth"
+load_from = None
 
 work_dir = 'logger/blackhole'
 

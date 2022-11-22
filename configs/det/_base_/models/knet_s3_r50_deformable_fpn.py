@@ -166,16 +166,15 @@ model = dict(
 
 custom_imports = dict(
     imports=[
-        'video_knet_vis.det.video_knet_vis',
-        'video_knet_vis.det.kernel_head',
-        'video_knet_vis.det.kernel_iter_head',
-        'video_knet_vis.det.kernel_update_head',
-        'video_knet_vis.det.semantic_fpn_wrapper',
-        'video_knet_vis.det.dice_loss',
-        'video_knet_vis.kernel_updator',
-        'video_knet_vis.det.msdeformattn_decoder',
-        'video_knet_vis.det.mask_hungarian_assigner',
-        'video_knet_vis.det.mask_pseudo_sampler',
+        'knet.det.kernel_head',
+        'knet.det.kernel_iter_head',
+        'knet.det.kernel_update_head',
+        'knet.det.semantic_fpn_wrapper',
+        'knet.det.dice_loss',
+        'knet.kernel_updator',
+        'knet.det.msdeformattn_decoder',
+        'knet.det.mask_hungarian_assigner',
+        'knet.det.mask_pseudo_sampler',
         'external.coco_panoptic',
         'swin.swin_transformer'
     ],

@@ -4,16 +4,8 @@ _base_ = [
     '../_base_/models/knet_track_r50_deformablefpn.py',
     '../_base_/datasets/youtubevis_2019.py',
 ]
-# TODO : load a video_knet_vis pretrained model
-_load_from = "/mnt/lustre/lixiangtai/project/Knet/work_dirs/coco/knet_swin_b_deformable_fpn_3x_instance_seg_4m/latest.pth"
 
 model = dict(
-    init_cfg=dict(
-        type='Pretrained',
-        checkpoint=_load_from,
-        map_location='cpu',
-        prefix=None,
-    ),
     backbone=dict(
         _delete_=True,
         type='SwinTransformerDIY',

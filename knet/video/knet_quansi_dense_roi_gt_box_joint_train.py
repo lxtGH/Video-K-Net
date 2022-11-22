@@ -12,6 +12,7 @@ from knet.det.utils import sem2ins_masks, sem2ins_masks_cityscapes, sem2ins_mask
 from unitrack.mask import tensor_mask2box
 from unitrack.utils.mask import mask2box, batch_mask2boxlist, bboxlist2roi
 
+# RoI box based Video K-Net baseline.
 @DETECTORS.register_module()
 class VideoKNetQuansiTrackROIGTBoxJointTrain(BaseDetector):
     """

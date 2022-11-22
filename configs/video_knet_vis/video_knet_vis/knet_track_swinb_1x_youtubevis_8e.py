@@ -4,16 +4,8 @@ _base_ = [
     '../_base_/models/knet_track_r50.py',
     '../_base_/datasets/youtubevis_2019.py',
 ]
-# TODO : load a video_knet_vis pretrained model
-_load_from = "/mnt/lustre/lixiangtai/pretrained/video_knet_vis/knet_swin_b_instance_coco.pth"
 
 model = dict(
-    init_cfg=dict(
-        type='Pretrained',
-        checkpoint=_load_from,
-        map_location='cpu',
-        prefix=None,
-    ),
     backbone=dict(
         _delete_=True,
         type='SwinTransformerDIY',

@@ -42,6 +42,7 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
                  cityscapes=False,
                  kitti_step=False,
                  cityscapes_short=False,
+                 vipseg=False,
                  freeze_detector=False,
                  semantic_filter=True,
                  # linking parameters
@@ -105,6 +106,7 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
         self.cityscapes = cityscapes  # whether to train the cityscape panoptic segmentation
         self.kitti_step = kitti_step  # whether to train the kitti step panoptic segmentation
         self.cityscapes_short = cityscapes_short  # whether to test the cityscape short panoptic segmentation
+        self.vipseg = vipseg  # whether to test the vip panoptic segmentation
         self.semantic_filter = semantic_filter
         self.link_previous = link_previous
         self.detach_mask_emd = detach_mask_emd
@@ -170,7 +172,8 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
                 i, :, img_metas[i]['img_shape'][0]:, :] = self.ignore_label
                 gt_semantic_seg[
                 i, :, :, img_metas[i]['img_shape'][1]:] = self.ignore_label
-                if self.cityscapes:
+
+                if self.cityscapes or self.vipseg:
                     sem_labels, sem_seg = sem2ins_masks_cityscapes(
                         gt_semantic_seg[i],
                         ignore_label=self.ignore_label,
@@ -482,27 +485,7 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
         """
 
         # set the dataset type
-        # whether is the first frame for such clips
-        # if "city" in img_metas[0]['filename']:
-        #     iid = img_metas[0]['iid']
-        #     fid = iid % 10000
-        #     is_first = (fid == 1)
-        # elif "motchallenge" in img_metas[0]['filename']:
-        #     iid = kwargs['img_id'][0].item()
-        #     fid = iid % 10000
-        #     is_first = (fid == 1)
-        #     if is_first:
-        #         print("First detected on {}".format(fid))
-        # elif "viper" in img_metas[0]['filename']:
-        #     iid = kwargs['img_id'][0].item()
-        #     fid = iid % 10000
-        #     is_first = (fid == 1)
-        # else:
-        #     iid = kwargs['img_id'][0].item()
-        #     fid = iid % 10000
-        #     is_first = (fid == 0)
-
-        if self.cityscapes and not self.kitti_step and not self.cityscapes_short:
+        if self.cityscapes and not self.kitti_step and not self.cityscapes_short and not self.vipseg:
             iid = img_metas[0]['iid']
             fid = iid % 10000
             is_first = (fid == 1)
@@ -524,6 +507,7 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
             self.obj_feats_memory = None
             self.x_feats_memory = None
             self.mask_preds_memory = None
+            print("fid", fid)
 
         # wheter to link the previous
         if self.link_previous:
@@ -552,7 +536,6 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
         # for tracking part
         _, segm_result, mask_preds, panoptic_result, query_output = cur_segm_results[0]
         panoptic_seg, segments_info = panoptic_result
-
 
         # get sorted tracking thing ids, labels, masks, score for tracking
         things_index_for_tracking, things_labels_for_tracking, thing_masks_for_tracking, things_score_for_tracking = \
@@ -593,9 +576,7 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
             for emb_layer in self.embed_fcs:
                 emb_feat = emb_layer(emb_feat)
             object_feats_embed = self.fc_embed(emb_feat).view(1, N, -1)
-            # print(things_index_for_tracking)
             object_feats_embed_for_tracking = object_feats_embed.squeeze(0)
-            # tracking embedding features
             track_feats = self._track_forward([object_feats_embed_for_tracking])
 
         if track_feats is not None:
@@ -606,10 +587,16 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
                 labels=things_labels_for_tracking,
                 track_feats=track_feats,
                 frame_id=fid)
+
             ids = ids + 1
             ids[ids == -1] = 0
+
+            # print("track feats:", track_feats[0])
+            # print("id", ids)
+
         else:
             ids = []
+
 
         track_maps = self.generate_track_id_maps(ids, thing_masks_for_tracking, panoptic_seg)
 
@@ -709,20 +696,18 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
         return thing_mask_pred, ref_thing_thing_mask_pred
 
     def get_semantic_seg(self, panoptic_seg, segments_info):
-        results = {}
-        masks = []
-        scores = []
         kitti_step2cityscpaes = [11, 13]
         semantic_seg = np.zeros(panoptic_seg.shape)
         for segment in segments_info:
             if segment['isthing'] == True:
+                # for things
                 if self.kitti_step:
                     cat_cur = kitti_step2cityscpaes[segment["category_id"]]
                     semantic_seg[panoptic_seg == segment["id"]] = cat_cur
-                else: # city
+                else:   # city and vip_seg
                     semantic_seg[panoptic_seg == segment["id"]] = segment["category_id"] + self.num_stuff_classes
             else:
-                # for stuff (0- n-1)
+                # for stuff (0 - n-1)
                 if self.kitti_step:
                     cat_cur = segment["category_id"]
                     cat_cur -= 1
@@ -732,19 +717,22 @@ class VideoKNetQuansiEmbedFCJointTrain(BaseDetector):
                             offset += 1
                     cat_cur += offset
                     semantic_seg[panoptic_seg == segment["id"]] = cat_cur
-                else: # city
+                else:   # city and vip_seg
                     semantic_seg[panoptic_seg == segment["id"]] = segment["category_id"] - 1
         return semantic_seg
 
     def generate_track_id_maps(self, ids, masks, panopitc_seg_maps):
+
         final_id_maps = np.zeros(panopitc_seg_maps.shape)
+
         if len(ids) == 0:
             return final_id_maps
-        # assert len(things_mask_results) == len(track_results)
         masks = masks.bool()
+
         for i, id in enumerate(ids):
             mask = masks[i].cpu().numpy()
             final_id_maps[mask] = id
+
         return final_id_maps
 
     def add_ref_loss(self, loss_dict):

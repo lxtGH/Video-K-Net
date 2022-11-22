@@ -1,15 +1,17 @@
 _base_ = [
-    '../../_base_/schedules/schedule_1x.py',
-    '../../_base_/default_runtime.py',
-    '../../_base_/models/knet_kitti_step_s3_r50_fpn.py',
-    '../../_base_/datasets/kitti_step_vps.py',
+    '../_base_/schedules/schedule_1x.py',
+    '../_base_/default_runtime.py',
+    '../_base_/models/knet_kitti_step_s3_r50_fpn.py',
+    '../_base_/datasets/kitti_step_vps.py',
 ]
 
-load_from = "/mnt/lustre/lixiangtai/project/Knet/work_dirs/city_step/swin_b_joint_8e/latest.pth"
-
+load_from = None
 
 num_stages = 3
 conv_kernel_size = 1
+num_thing_classes = 2
+num_stuff_classes = 17
+num_classes = num_thing_classes + num_stuff_classes
 
 model = dict(
     type="VideoKNetQuansiEmbedFCJointTrain",
@@ -17,8 +19,8 @@ model = dict(
     kitti_step=True,
     link_previous=True,
     mask_assign_stride=2,
-    num_thing_classes=2,
-    num_stuff_classes=17,
+    num_thing_classes=num_thing_classes,
+    num_stuff_classes=num_stuff_classes,
     ignore_label=255,
     backbone=dict(
         _delete_=True,
@@ -92,12 +94,12 @@ model = dict(
         mask_head=[
             dict(
                 type='VideoKernelUpdateHead',
-                num_classes=19,
+                num_classes=num_classes,
                 previous='placeholder',
                 previous_link="update_dynamic_cov",
                 previous_type="update",
-                num_thing_classes=2,
-                num_stuff_classes=17,
+                num_thing_classes=num_thing_classes,
+                num_stuff_classes=num_stuff_classes,
                 num_ffn_fcs=2,
                 num_heads=8,
                 num_cls_fcs=1,

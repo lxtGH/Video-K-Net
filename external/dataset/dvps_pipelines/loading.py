@@ -1,9 +1,7 @@
 import mmcv
 import numpy as np
-import torch
 from mmdet.core import BitmapMasks
 from mmdet.datasets.builder import PIPELINES
-from mmdet.datasets.pipelines import LoadAnnotations, LoadImageFromFile
 
 
 def bitmasks2bboxes(bitmasks):
@@ -97,12 +95,17 @@ class LoadAnnotationsDirect:
                  divisor: int = 1000,
                  cherry_pick=False,
                  cherry=None,
-                 viper=False):
+                 viper=False,
+                 vipseg=False
+                 ):
         self.with_depth = with_depth
         self.panseg_divisor = divisor
         self.cherry_pick = cherry_pick
         self.cherry = cherry
         self.viper = viper
+        self.vipseg=vipseg
+        if self.vipseg:
+            self.panseg_divisor = 1000
 
     def __call__(self, results):
         """Call functions to load image and get image meta information.
@@ -139,8 +142,11 @@ class LoadAnnotationsDirect:
             del results['ann']
         else:
             ps_id = mmcv.imread(results['ann'], flag='unchanged').astype(np.float32)
+            if self.vipseg:
+                ps_id = results['pre_hook'](ps_id)
+                del results['pre_hook']
             # This is for viper
-            if self.viper:
+            if self.viper or self.vipseg:
                 ps_id[ps_id < 1000] *= 1000
             del results['ann']
             gt_semantic_seg = ps_id // self.panseg_divisor
