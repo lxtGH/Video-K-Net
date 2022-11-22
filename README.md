@@ -18,7 +18,7 @@ VSS(Video Semantic Segmentation), VIS(Video Instance Segmentation).
 To the best of our knowledge, our Video K-Net is the first open-sourced method that supports three different video segmentation tasks (VIS, VPS, VSS) for Video Scene Understanding.
 
 
-## News! Video K-Net also support [VIP-Seg](https://github.com/VIPSeg-Dataset/VIPSeg-Dataset) dataset(CVPR-2022). It also achieves the new state-of-the-art result.
+## News! Video K-Net also supports [VIP-Seg](https://github.com/VIPSeg-Dataset/VIPSeg-Dataset) dataset(CVPR-2022). It also achieves the new state-of-the-art result.
 
 
 
