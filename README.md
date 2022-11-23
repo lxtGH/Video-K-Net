@@ -1,4 +1,5 @@
-# Video K-Net: A Simple, Strong, and Unified Baseline for Video Segmentation (CVPR-2022, oral) [Sides](./slides/Video-KNet-cvpr-slides-10-25-version.pptx), [Poster](./slides/cvpr22_poster_lxt_zww_pjm.pdf), [Video](https://www.youtube.com/watch?v=LIEyp_czu20&t=3s)
+# Video K-Net: A Simple, Strong, and Unified Baseline for Video Segmentation (CVPR-2022, oral) 
+## [Paper](https://arxiv.org/abs/2204.04656), [Sides](./slides/Video-KNet-cvpr-slides-10-25-version.pptx), [Poster](./slides/cvpr22_poster_lxt_zww_pjm.pdf), [Video](https://www.youtube.com/watch?v=LIEyp_czu20&t=3s)
 
 [Xiangtai Li](https://lxtgh.github.io/),
 [Wenwei Zhang](https://zhangwenwei.cn/),
