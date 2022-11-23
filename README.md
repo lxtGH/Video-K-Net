@@ -1,4 +1,4 @@
-# Video K-Net: A Simple, Strong, and Unified Baseline for Video Segmentation (CVPR-2022, oral) Sides[] Video[] 
+# Video K-Net: A Simple, Strong, and Unified Baseline for Video Segmentation (CVPR-2022, oral) [Sides](./slides/Video-KNet-cvpr-slides-10-25-version.pptx) [Poster](./slides/cvpr22_poster_lxt_zww_pjm.pdf), [Video](https://www.youtube.com/watch?v=LIEyp_czu20&t=3s)
 
 [Xiangtai Li](https://lxtgh.github.io/),
 [Wenwei Zhang](https://zhangwenwei.cn/),
@@ -23,7 +23,7 @@ To the best of our knowledge, our Video K-Net is the first open-sourced method t
 
 
 ### Environment and DataSet Preparation 
-Our codebase is based on MMdetection and MMSegmentation. Parts of the code is borrowed from MMtracking and UniTrack.
+Our codebase is based on MMDetection and MMSegmentation. Parts of the code is borrowed from MMtracking and UniTrack.
 
 - MIM >= 0.1.1
 - MMCV-full >= v1.3.8
@@ -45,6 +45,10 @@ knet_vis folder contains the Video K-Net for VIS.
 We provide the pretrained models for VPS and VIS.
 
 Baidu Yun Link: [here](https://pan.baidu.com/s/12dIinkAF3o60fcAoggVhjQ)  Code:i034
+
+The pretrained models are provided to train the Video K-Net.
+
+The trained models are also provided for play and test.
 
 To Do:
 One Drive Link: [here]()
