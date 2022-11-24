@@ -47,12 +47,13 @@ We provide the pretrained models for VPS and VIS.
 
 Baidu Yun Link: [here](https://pan.baidu.com/s/12dIinkAF3o60fcAoggVhjQ)  Code:i034
 
+One Drive Link: [here](https://1drv.ms/u/s!Ai4mxaXd6lVBgSCTUS0QWNim2zGx?e=uceSee)
+
 The pretrained models are provided to train the Video K-Net.
 
 The trained models are also provided for play and test.
 
-To Do:
-One Drive Link: [here]()
+
 
 ### [VPS] KITTI-STEP
 
