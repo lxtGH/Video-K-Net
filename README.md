@@ -222,11 +222,12 @@ ECCV-2022, PolyphonicFormer: A Unified Framework For Panoptic Segmentation + Dep
   booktitle={CVPR},
   year={2022}
 }
-@inproceedings{zhang2021knet,
-    title={{K-Net: Towards} Unified Image Segmentation},
-    author={Wenwei Zhang and Jiangmiao Pang and Kai Chen and Chen Change Loy},
-    year={2021},
-    booktitle={NeurIPS},
+
+@article{zhang2021k,
+  title={K-net: Towards unified image segmentation},
+  author={Zhang, Wenwei and Pang, Jiangmiao and Chen, Kai and Loy, Chen Change},
+  journal={NeurIPS},
+  year={2021}
 }
 ```
 
