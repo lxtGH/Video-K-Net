@@ -215,4 +215,18 @@ NIPS-2021, K-Net: Unified Segmentation: Our Image baseline (https://github.com/Z
 ECCV-2022, PolyphonicFormer: A Unified Framework For Panoptic Segmentation + Depth Estimation (winner of ICCV-2021 BMTT workshop)
 (https://github.com/HarborYuan/PolyphonicFormer)
 
+```bibtex
+@inproceedings{li2022videoknet,
+  title={Video k-net: A simple, strong, and unified baseline for video segmentation},
+  author={Li, Xiangtai and Zhang, Wenwei and Pang, Jiangmiao and Chen, Kai and Cheng, Guangliang and Tong, Yunhai and Loy, Chen Change},
+  booktitle={CVPR},
+  year={2022}
+}
+@inproceedings{zhang2021knet,
+    title={{K-Net: Towards} Unified Image Segmentation},
+    author={Wenwei Zhang and Jiangmiao Pang and Kai Chen and Chen Change Loy},
+    year={2021},
+    booktitle={NeurIPS},
+}
+```
 
