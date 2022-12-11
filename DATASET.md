@@ -17,6 +17,7 @@ Download the KITTI-STEP from the official website.
 
 Then run the scripts in scripts/kitti_step_prepare.py.
 You will get such format.
+You can get the our pre-process format in https://huggingface.co/LXT/VideoK-Net/tree/main
 
 ```
 ├── kitti-step
