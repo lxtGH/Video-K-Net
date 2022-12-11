@@ -15,6 +15,9 @@ root
 
 Download the KITTI-STEP from the official website. 
 
+Then run the scripts in scripts/kitti_step_prepare.py.
+You will get such format.
+
 ```
 ├── kitti-step
 │   ├──  video_sequence
