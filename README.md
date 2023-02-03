@@ -208,6 +208,9 @@ images(left), Video K-Net(middle), Ground Truth
 
 
 ## Related Project and Acknowledgement
+## Citing Video K-Net :pray:
+
+If you use our codebase in your research or used for CVPR-2023 pixel-level video workshop, please use the following BibTeX entry.
 
 NIPS-2021, K-Net: Unified Segmentation: Our Image baseline (https://github.com/ZwwWayne/K-Net)
 
