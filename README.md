@@ -140,9 +140,9 @@ GPUS=8 sh ./tools/slurm_train.sh $PARTITION video_knet_vis configs/video_knet_vi
 
 ```bash
 # test Video K-Net VIS models using R-50
-GPUS=8 sh ./tools/slurm_train.sh $PARTITION video_knet_vis configs/video_knet_vis/video_knet_vis/knet_track_r50_1x_youtubevis.py $WORK_DIR 
+GPUS=8 sh tools_vis/dist_test_whole_video.sh $PARTITION video_knet_vis configs/video_knet_vis/video_knet_vis/knet_track_r50_1x_youtubevis.py $WORK_DIR --format-only
 ```
-
+The result json is dumped into the root of this codebase. 
 
 ### [VPS] VIP-Seg
 
